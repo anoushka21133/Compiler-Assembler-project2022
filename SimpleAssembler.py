@@ -260,6 +260,7 @@ else:
           f1.close()
           f1=open('output.txt', 'w')
           f1.write(opc)
+
       elif a==4 and y==1:  #for instruction type D
         opc=opcodesD[i[0]]
         y=1
