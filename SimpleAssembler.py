@@ -181,3 +181,154 @@ else:
           f1.close()
           f1=open('output.txt', 'w')
           f1.write(opc)
+      elif a==2 and y==1: #for instruction type B
+        y=1
+        if len(i)!=3 or i[1][0]!='R' :
+          opc='syntax error: invalid syntax (line no.:'+str(counter)+')'
+          f1.close()
+          f1=open("output.txt","w")
+          f1.write(opc)
+          y=0
+        else:
+          opc=opcodesB[i[0]]
+          if getreg(i[1])==1:
+            if i[1]!="FLAGS":
+                opc+= registers[i[1]]
+                y=1
+            else:
+              opc="invalid use of FLAGS (line no.:"+str(counter)+')'
+              y=0
+          else:
+            opc="invalid: register does not exist (line no.:"+str(counter)+')'
+            y=0
+          if y==1:
+            try:
+              binary=converttobin(int(i[2][1:]))
+              if binary!=1:
+                opc+=converttobin(int(i[2][1:]))
+              else:
+                opc="Immediate value out of range (line no.:"+str(counter)+')'
+                y=0
+            except ValueError:
+              opc="Invalid immediate (line no.:"+str(counter)+')'
+              y=0
+        if y==1:
+          f1.write(opc)
+          f1.write("\n")
+        else:
+          f1.close()
+          f1=open('output.txt', 'w')
+          f1.write(opc)
+      elif a==3 and y==1: #for instruction type C
+        opc=opcodesC[i[0]]
+        y=1
+        if len(i)!=3 :
+          opc='syntax error: invalid syntax (line no.:'+str(counter)+')'
+          f1.close()
+          f1=open("output.txt","w")
+          f1.write(opc)
+          y=0
+        else:
+          opc=opcodesC[i[0]]+'00000'
+          if getreg(i[1])==1:
+            if i[1]!="FLAGS":
+              opc+= registers[i[1]]
+              y=1
+            else:
+              opc="invalid use of FLAGS (line no.:"+str(counter)+')'
+              y=0
+          else:
+            opc="invalid: register does not exist (line no.:"+str(counter)+')'
+            y=0
+          if getreg(i[2])==1 and i[0]!="mov":
+            if i[2]!="FLAGS":
+              opc+= registers[i[2]]
+              y=1
+            else:
+              opc="invalid use of FLAGS (line no.:"+str(counter)+')'
+              y=0
+          elif getreg(i[2])==1 and i[0]=="mov":
+            opc+= registers[i[2]]
+            y=1
+          else:
+            opc="invalid: register does not exist (line no.:"+str(counter)+')'
+            y=0
+        if y==1:
+          f1.write(opc)
+          f1.write("\n")
+        else:
+          f1.close()
+          f1=open('output.txt', 'w')
+          f1.write(opc)
+      elif a==4 and y==1:  #for instruction type D
+        opc=opcodesD[i[0]]
+        y=1
+        if len(i)!=3 :
+          opc='syntax error: invalid syntax (line no.:'+str(counter)+')'
+          f1.close()
+          f1=open("output.txt","w")
+          f1.write(opc)
+          y=0
+        else:
+          if getreg(i[1])==1:
+            if i[1]!="FLAGS":
+                opc+= registers[i[1]]
+                y=1
+            else:
+              opc="invalid use of FLAGS (line no.:"+str(counter)+')'
+              y=0
+          else:
+            opc="invalid: register does not exist (line no.:"+str(counter)+')'
+            y=0
+          if y==1:
+            if i[2] in Var:
+              opc+=Var[i[2]]
+            elif i[2] in Label:
+              opc="invalid: label used as variable (line no.:"+str(counter)+')'
+              y=0
+            else:
+              opc="invalid: variable not defined (line no.:"+str(counter)+')'
+              y=0 
+        if y==1:
+          f1.write(opc)
+          f1.write("\n")
+        else:
+          f1.close()
+          f1=open('output.txt', 'w')
+          f1.write(opc)
+      elif a==5 and y==1: #for instruction type E
+        opc=opcodesE[i[0]]+'000'
+        y=1
+        if len(i)!=2 :
+          opc='syntax error: invalid syntax (line no.:'+str(counter)+')'
+          f1.close()
+          f1=open("output.txt","w")
+          f1.write(opc)
+          y=0
+        else:
+          if i[-1] in Label:
+            opc+=str(Label[i[-1]])
+          elif i[-1] in Var:
+            opc= "invalid: variable used as label (line no.:"+str(counter)+')'
+            y=0
+          else:
+            opc= "invalid: label not defined (line no.:"+str(counter)+')'
+            y=0
+        if y==1:
+          f1.write(opc)
+          f1.write("\n")
+        else:
+          f1.close()
+          f1=open('output.txt', 'w')
+          f1.write(opc)
+  if y==1:
+    opc=opcodesF['hlt']
+    f1.write(opc)
+
+f1.close()
+f1=open('output.txt', 'r')
+r1=f1.readlines()
+for i in r1:
+    print(i)
+
+f1.close()
