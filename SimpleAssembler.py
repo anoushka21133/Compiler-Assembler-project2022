@@ -220,6 +220,7 @@ else:
           f1=open('output.txt', 'w')
           f1.write(opc)
       elif a==3 and y==1: #for instruction type C
+        #changed code from here
         opc=opcodesC[i[0]]
         y=1
         if len(i)!=3 :
@@ -230,26 +231,26 @@ else:
           y=0
         else:
           opc=opcodesC[i[0]]+'00000'
-          if getreg(i[1])==1:
+          if getreg(i[1])==1 and i[0]!="mov":
             if i[1]!="FLAGS":
               opc+= registers[i[1]]
               y=1
             else:
               opc="invalid use of FLAGS (line no.:"+str(counter)+')'
               y=0
+          elif getreg(i[1])==1 and i[0]=="mov":
+            opc+= registers[i[1]]
+            y=1
           else:
             opc="invalid: register does not exist (line no.:"+str(counter)+')'
             y=0
-          if getreg(i[2])==1 and i[0]!="mov":
+          if getreg(i[2])==1:
             if i[2]!="FLAGS":
               opc+= registers[i[2]]
               y=1
             else:
               opc="invalid use of FLAGS (line no.:"+str(counter)+')'
               y=0
-          elif getreg(i[2])==1 and i[0]=="mov":
-            opc+= registers[i[2]]
-            y=1
           else:
             opc="invalid: register does not exist (line no.:"+str(counter)+')'
             y=0
@@ -260,7 +261,7 @@ else:
           f1.close()
           f1=open('output.txt', 'w')
           f1.write(opc)
-
+          #changes ended here
       elif a==4 and y==1:  #for instruction type D
         opc=opcodesD[i[0]]
         y=1
