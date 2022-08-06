@@ -1,1 +1,2 @@
 python SimpleAssembler.py
+python SimpleSimulator.py

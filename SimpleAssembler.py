@@ -1,11 +1,12 @@
 import sys
 # dictionary for opcodes
-opcodesA={'add':'10000','sub':'10001','mul':'10110','xor':'11010','or':'11011','and':'11100'}
-opcodesB={'mov':'10010','rs':'11000','ls':'11001'}
+opcodesA={'add':'10000','sub':'10001','mul':'10110','xor':'11010','or':'11011','and':'11100','addf':'00000','subf':'00001'}
+opcodesB={'mov':'10010','rs':'11000','ls':'11001','movf':'00010'}
 opcodesC={'mov':'10011','div':'10111','not':'11101','cmp':'11110'}
 opcodesD={'ld':'10100','st':'10101'}
 opcodesE={'jmp':'11111','jlt':'01100','jgt':'01101','je':'01111'}
 opcodesF={'hlt':'0101000000000000'}
+#opcodesG={'addf':'00000','subf':'00001','movf':'00010'}
 
 # register dictionary
 registers = {'R0': '000', 'R1': '001', 'R2': '010', 'R3': '011', 'R4': '100', 'R5': '101', 'R6': '110', 'FLAGS':'111'}
@@ -48,11 +49,44 @@ def converttobin(n):
           l+='0'
       l=l+ss
       return l
+#float to binary
+def convertfloat(n):
+  s=str(n).split(".")
+  int1=s[0]
+  dec1=float('0'+'.'+s[1])
+  int1=bin(int(int1))[2:]
+  int2=''
+  int2+=int1
+  int2+='.'
+  for i in range(50):
+      dec1=dec1*2
+      s=str(dec1).split(".")
+      int1=s[0]
+      int2+=int1
+      dec1=float('0'+'.'+s[1])
+  exp=len(int2.split('.')[0])-1
+  if exp>7:
+      #print("Error: floating point number out of range")
+      return 1
+  else:
+      float1=bin(exp)[2:]
+  s=int2.split('.')[0]+int2.split('.')[1]
+  for i in s[6:]:
+      if i=='1':
+          #print("Error: floating point number out of range")
+          return 1
+  s=s[1:6]
+  float1=float1+s
+  l=''
+  for i in range(8-len(float1)):
+      l+='0'
+  l=l+float1
+  return l
+
 
 #main function
 f1=open("output.txt","w")
 r=sys.stdin.readlines()
-
 firstinstruction=0
 for i in r:
     i=i.rstrip()
@@ -119,13 +153,13 @@ for i in range(len(l1)):
   if len(l4)!=0:
     Var[l4[1]]=converttobin(Val)
     Val=Val+1
-counter=0
+counter=len(l1)
 y=1
 
 l2[-1]=l2[-1].rstrip()
 l2[-1]=l2[-1].lstrip()
 if l2[-1]!='hlt':
-  opc="halt error: hlt instruction missing/not at end"
+  opc="halt error: hlt instruction missing/not at end (line no."+ str(len(r))+")"
   f1.write(opc)
 elif check==1:
   opc="variable error: variables not defined at beginning"
@@ -202,10 +236,13 @@ else:
             opc="invalid: register does not exist (line no.:"+str(counter)+')'
             y=0
           if y==1:
-            try:
+            if '.' in i[2][1:]:
+              binary=convertfloat(float(i[2][1:]))
+            else:
               binary=converttobin(int(i[2][1:]))
+            try:
               if binary!=1:
-                opc+=converttobin(int(i[2][1:]))
+                opc+=binary
               else:
                 opc="Immediate value out of range (line no.:"+str(counter)+')'
                 y=0
